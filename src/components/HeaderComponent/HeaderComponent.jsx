@@ -1,8 +1,41 @@
+import {  Col } from 'antd';
 import React from 'react';
-
+import { WrapperHeader, WrapperHeaderAccount, WrapperHeaderCol, WrapperTextHeaderSmall } from './style';
+import Search from 'antd/es/transfer/search';
+import { CaretDownOutlined, ShoppingCartOutlined, UserOutlined } from '@ant-design/icons';
 const HeaderComponent =() => {
     return ( <div>
-        HeaderComponent
+        <WrapperHeader gutter={16}>
+            <Col span={6}>
+                <WrapperHeaderCol>DANHSHOP</WrapperHeaderCol>
+            </Col>
+            <Col span={12}>
+                <Search
+                placeholder="Tìm kiếm sản phẩm"
+                allowClear
+                enterButton="Tìm kiếm"
+                size="large"
+                onSearch={(value) => console.log(value)}>
+                </Search>
+            </Col>
+            <Col span={6} style={{display:'flex', gap:'20px'}}>
+                <WrapperHeaderAccount>
+                    <UserOutlined style={{fontSize:'30px'}}/>
+                        <div>
+                            <span>Đăng nhập/Đăng ký </span>
+                           <div>
+                             <span>Tài Khoản  </span>
+                             <CaretDownOutlined></CaretDownOutlined>
+                             </div>
+                        </div>
+                    
+                </WrapperHeaderAccount>
+                <div>
+                    <ShoppingCartOutlined style={{fontSize:'30px',color:'#fff'}}/>
+                    <WrapperTextHeaderSmall>Giỏ hàng</WrapperTextHeaderSmall>
+                </div>
+                </Col>
+        </WrapperHeader>
     </div> );
 }
 
