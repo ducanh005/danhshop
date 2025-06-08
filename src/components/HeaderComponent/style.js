@@ -19,7 +19,7 @@ export const WrapperHeaderAccount = styled.div`
     align-items: center;
     color: #fff;
     gap: 10px;
-    font-size: 12px;
+   
 `;
 export const WrapperTextHeaderSmall = styled.span`
     fotn-size: 12px;
