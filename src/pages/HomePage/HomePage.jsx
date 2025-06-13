@@ -6,6 +6,7 @@ import Slider1 from '../../assest/images/Slider1.jpg';
 import Slider2 from '../../assest/images/Slider2.jpg';
 import { Card } from 'antd';
 import CardComponent from '../../components/CardComponent/CardComponent';
+import NavBarComponent from '../../components/NavBarComponent/NavBarComponent';
 const HomePage =() => {
     const arr =['TV', 'Laptop', 'Phone'] ;
     return (
@@ -24,6 +25,8 @@ const HomePage =() => {
                   <div style={{marginTop: '20px', display: 'flex',alignItems: 'center', gap: '20px'}}>
                     <CardComponent />
                   </div>
+                
+                <NavBarComponent></NavBarComponent>
                   </div>
           
        
