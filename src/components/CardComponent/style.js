@@ -11,7 +11,6 @@ export const WrapperCardStyle = styled(Card)`
 
 
 
-
 export const StyleNameProduct = styled.div`
     font-weight: 400;
     font-size: 12px;

@@ -3,6 +3,7 @@ import React from 'react';
 import { WrapperHeader, WrapperHeaderAccount, WrapperHeaderCol, WrapperTextHeaderSmall } from './style';
 import { CaretDownOutlined, ShoppingCartOutlined, UserOutlined } from '@ant-design/icons';
 import ButtonInputSearch from '../ButtonInputSearch/ButtonInputSearch';
+import {Badge} from 'antd';
 const HeaderComponent =() => {
     return ( <div>
         <WrapperHeader gutter={16}>
@@ -31,8 +32,10 @@ const HeaderComponent =() => {
                     
                 </WrapperHeaderAccount>
                 <div>
-                    <ShoppingCartOutlined style={{fontSize:'30px',color:'#fff'}}/>
-                    <WrapperTextHeaderSmall>Giỏ hàng</WrapperTextHeaderSmall>
+                    <Badge count={4} size="small">
+                        <ShoppingCartOutlined style={{fontSize:'30px',color:'#fff'}}/>
+                    </Badge>
+                        <WrapperTextHeaderSmall>Giỏ hàng</WrapperTextHeaderSmall>
                 </div>
                 </Col>
         </WrapperHeader>

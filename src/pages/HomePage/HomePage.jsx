@@ -7,6 +7,7 @@ import Slider2 from '../../assest/images/Slider2.jpg';
 import { Card } from 'antd';
 import CardComponent from '../../components/CardComponent/CardComponent';
 import { WrapperButton } from './style';
+import { WrapperProducts } from './style';
 const HomePage =() => {
     const arr =['TV', 'Laptop', 'Phone'] ;
     return (
@@ -22,7 +23,7 @@ const HomePage =() => {
          </div>
               <div id='container' style={{backgroundColor:'#efefef',padding:'0 120px', height:'1000px',width:'100%'}} >
                   <SliderComponent arrImages={[Slider1, Slider2]}/>
-                  <div style={{marginTop: '20px', display: 'flex',alignItems: 'center',gap:'30px', flexWrap:'wrap'}}>
+                  <WrapperProducts >
                     <CardComponent />
                     <CardComponent />
                     <CardComponent />
@@ -30,7 +31,8 @@ const HomePage =() => {
                     <CardComponent />
                     <CardComponent />
                     <CardComponent />
-                  </div>
+                    <CardComponent />
+                  </WrapperProducts>
                     <div style={{width:'100%',display:'flex',justifyContent:'center',marginTop:'10px'}}>
                       <WrapperButton textButton="Xem thêm " type="outline" styleButton={{
                         border: '1px solid rgb(11,116,229)', color:'rgb(11,116,229)',
