@@ -5,6 +5,7 @@ import { WrapperCardStyle } from "./style";
 import official_logo from '../../assest/images/official_logo.png';
 import { Image } from "antd";
 import { WrapperImageStyle } from "./style";
+import {WrapperStyleTextSell} from "./style";
 const CardComponent = ({ }) => {
   return (
   <WrapperCardStyle
@@ -23,7 +24,7 @@ const CardComponent = ({ }) => {
             <span>4.96</span>
             <StarFilled style={{fontSize:'12px', color:'yellow'}}/>
        </span>
-        <span>| Đã bán 1000+  </span>
+        <WrapperStyleTextSell>| Đã bán 1000+  </WrapperStyleTextSell>
     </WrapperReportText>
         <WrapperPriceText>
             1.000.000Đ
