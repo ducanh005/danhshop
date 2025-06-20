@@ -3,7 +3,10 @@ import InputForm from '../../components/InputForm/InputForm'
 import ButtonComponent from '../../components/ButtonComponent/ButtonComponent'
 import imageLogo from '../../assest/images/logo-log-in.png'
 import {Divider, Image} from 'antd'
+import { useState } from 'react'
+import { EyeFilled,EyeInvisibleFilled  } from "@ant-design/icons";
 const SignInPage = () => {
+  const[isShowPassword, setIsShowPassword] = useState(false)
   return (
       <div style={{display:'flex', alignItems:'center',justifyContent:'center',background:'rgba(0,0,0,0.53)',height:'100vh'}}>
         <div style={{width:'800px',height:'445px', borderRadius:'6px', backgroundColor:'#fff', display:'flex'}}>
@@ -11,8 +14,23 @@ const SignInPage = () => {
             <h1>Xin chào</h1>
             <p>Đăng nhập và tạo tài khoản </p>
             <InputForm style={{marginBottom:'10px'}} placeholder="abc@gmail.com"></InputForm>
-            
-            <InputForm placeholder="password"></InputForm>
+            <div style={{position:'relative'}}>
+              <span style={{
+                zIndex: 10,
+                position:'absolute',
+                top:'4px',
+                right:'8px'
+              }}>
+                {
+                  isShowPassword ? (
+                    <EyeFilled></EyeFilled>
+                  ) : ( 
+                    <EyeInvisibleFilled/>
+                  )
+                }
+              </span>
+              <InputForm placeholder="password" type={isShowPassword ? "text" : "password"}></InputForm>
+            </div>
             <ButtonComponent 
                 bordered={false}  
                 size={40} 

@@ -5,12 +5,12 @@ import { CaretDownOutlined, ShoppingCartOutlined, UserOutlined } from '@ant-desi
 import ButtonInputSearch from '../ButtonInputSearch/ButtonInputSearch';
 import {Badge} from 'antd';
 const HeaderComponent =() => {
-    return ( <div>
-        <WrapperHeader gutter={16}>
-            <Col span={6}>
+    return ( <div style={{width:'100%', background:'rgb(26,148,255)',display:'flex', justifyContent:'center'}}>
+        <WrapperHeader >
+            <Col span={5}>
                 <WrapperHeaderCol>DANHSHOP</WrapperHeaderCol>
             </Col>
-            <Col span={12}>
+            <Col span={13}> 
                 <ButtonInputSearch
                 size='large'
                 bordered={false}
@@ -19,13 +19,13 @@ const HeaderComponent =() => {
                
               ></ButtonInputSearch>
             </Col>
-            <Col span={6} style={{display:'flex', gap:'20px',alignItems:'center'}}>
+            <Col span={6} style={{display:'flex', gap:'54px',alignItems:'center'}}>
                 <WrapperHeaderAccount>
                     <UserOutlined style={{fontSize:'30px'}}/>
                         <div>
-                            <span>Đăng nhập/Đăng ký </span>
+                            <WrapperTextHeaderSmall>Đăng nhập/Đăng ký </WrapperTextHeaderSmall>
                            <div>
-                             <span>Tài Khoản  </span>
+                             <WrapperTextHeaderSmall>Tài Khoản  </WrapperTextHeaderSmall>
                              <CaretDownOutlined></CaretDownOutlined>
                              </div>
                         </div>
