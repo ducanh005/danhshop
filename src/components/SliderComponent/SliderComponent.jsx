@@ -18,6 +18,7 @@ import {WrapperSliderStyle} from './style'
           {arrImages.map((image, index) => {
             return (
                 <Image
+                key={image}
                   src={image}
                   alt={`slider-${index}`}
                   preview={false}
