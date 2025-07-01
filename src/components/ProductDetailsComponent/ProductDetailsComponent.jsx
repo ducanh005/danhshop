@@ -62,12 +62,10 @@ const ProductDetailsComponent = () => {
           </div>
           <div style={{display:'flex',alignItems:'center',gap:'12px'}}>
             <ButtonComponent 
-              bordered={false}  
               size={40} 
               styleButton={{background:'rgb(255,57,69)',height:'48px',width:'220px',border:'none',borderRadius:'4px'}} 
               textButton={'Chọn mua '} styleTextButton={{color:'#fff',fontSize:'15px',fontWeight:'700'}}></ButtonComponent>
               <ButtonComponent 
-              bordered={false}
               size={40} 
               styleButton={{background:'#fff',height:'48px',width:'220px',border:'none',borderRadius:'4px',border:'1px solid rgb(13,92,182)'}} 
               textButton={'Mua trả sau '} styleTextButton={{color:'rgb(13,92,182)',fontSize:'15px'}}></ButtonComponent>
