@@ -3,12 +3,13 @@ import InputForm from '../../components/InputForm/InputForm'
 import ButtonComponent from '../../components/ButtonComponent/ButtonComponent'
 import imageLogo from '../../assest/images/logo-log-in.png'
 import { Image} from 'antd'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { EyeFilled,EyeInvisibleFilled  } from "@ant-design/icons";
 import { useNavigate } from 'react-router-dom'
 import * as UserService from '../../service/UserService'
 import { useMutationHooks } from '../../hooks/userMutationHook'
 import Loading from '../../components/LoadingComponent/Loading'
+import * as message from '../../components/Message/Message'
 const SignUpPage = () => {
   const[isShowPassword, setIsShowPassword] = useState(false)
   const [isShowConfirmPassword, setIsShowConfirmPassword] = useState(false)
@@ -24,7 +25,16 @@ const SignUpPage = () => {
        data =>UserService.signupUser(data),
     )
   
-    const{data, isPending} = mutation
+    const{data, isPending, isSuccess, isError} = mutation
+
+    useEffect(() => {
+      if(isSuccess){
+        message.success()
+        handleNavigateSignIn()
+      }else if(isError){
+        message.error()
+      }
+    },[isSuccess,isError])
 
   const handleOnchangePassword = (value) => {
     setPassword(value)

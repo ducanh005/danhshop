@@ -3,17 +3,22 @@ import InputForm from '../../components/InputForm/InputForm'
 import ButtonComponent from '../../components/ButtonComponent/ButtonComponent'
 import imageLogo from '../../assest/images/logo-log-in.png'
 import {Divider, Image} from 'antd'
-import { use, useState } from 'react'
+import { use, useEffect, useState } from 'react'
 import { EyeFilled,EyeInvisibleFilled  } from "@ant-design/icons";
 import { useNavigate } from 'react-router-dom'
 import * as UserService from '../../service/UserService'
 import { useMutationHooks } from '../../hooks/userMutationHook'
 import Loading from '../../components/LoadingComponent/Loading'
+import {jwtDecode} from 'jwt-decode' 
+import {useDispatch} from 'react-redux'
+import { updateUser } from '../../redux/slides/userSlide'
 const SignInPage = () => {
   const[isShowPassword, setIsShowPassword] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const navigate = useNavigate()
+  const dispatch = useDispatch();
+
   const handleNavigateSignUp = () => {
     navigate('/sign-up')
   }
@@ -23,7 +28,26 @@ const SignInPage = () => {
      
   )
 
-  const {data, isPending} = mutation
+  const {data, isPending, isSuccess, isError} = mutation
+
+  useEffect(() => {
+    if(isSuccess){
+      navigate('/')
+      localStorage.setItem('access-token', data?.access_token)
+      if(data?.access_token){
+        const decoded = jwtDecode(data?.access_token)
+        if(decoded?.id){
+          handleGetdetailsUser(decoded?.id, data?.access_token)
+        }
+      }
+    }
+  },[isSuccess]
+  )
+
+  const handleGetdetailsUser = async(id, token) => {
+    const res = await UserService.getDetailsUser(id, token)
+    dispatch(updateUser({...res?.data,access_token:token}))
+  }
 
   const handleOnchangeEmail = (value) => {
     setEmail(value)

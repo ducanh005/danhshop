@@ -5,9 +5,12 @@ import { CaretDownOutlined, ShoppingCartOutlined, UserOutlined } from '@ant-desi
 import ButtonInputSearch from '../ButtonInputSearch/ButtonInputSearch';
 import {Badge} from 'antd';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 const HeaderComponent =() => {
-    
+
         const navigate = useNavigate();
+        const user = useSelector((state) => state.user);
+        console.log('user', user)
         const handleNavigateLogin = () => {
             navigate('/sign-in')
         }
@@ -28,13 +31,18 @@ const HeaderComponent =() => {
             <Col span={6} style={{display:'flex', gap:'54px',alignItems:'center'}}>
                 <WrapperHeaderAccount>
                     <UserOutlined style={{fontSize:'30px'}}/>
-                        <div onClick={handleNavigateLogin} style={{cursor:'pointer'}}>
-                            <WrapperTextHeaderSmall>Đăng nhập/Đăng ký </WrapperTextHeaderSmall>
-                           <div>
-                             <WrapperTextHeaderSmall>Tài Khoản  </WrapperTextHeaderSmall>
-                             <CaretDownOutlined></CaretDownOutlined>
-                             </div>
-                        </div>
+
+                        {user?.name ? (
+                            <div style={{cursor:'pointer'}}>{user.name}</div>
+                        ):(
+                            <div onClick={handleNavigateLogin} style={{cursor:'pointer'}}>
+                                <WrapperTextHeaderSmall>Đăng nhập/Đăng ký </WrapperTextHeaderSmall>
+                            <div>
+                                <WrapperTextHeaderSmall>Tài Khoản  </WrapperTextHeaderSmall>
+                                <CaretDownOutlined></CaretDownOutlined>
+                                </div>
+                            </div>
+                        )}
                     
                 </WrapperHeaderAccount>
                 <div>
