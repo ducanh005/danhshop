@@ -4,21 +4,48 @@ import React, { Fragment, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { routes } from "./routes";
 import DefaultComponent from "./components/DefaultComponent/DefaultComponent";
+import { isJsonString } from './utils';
+import { jwtDecode } from 'jwt-decode';
+import * as UserService from './service/UserService'
+import { useDispatch } from 'react-redux';
+import { updateUser } from './redux/slides/userSlide';
 function App() {
+    const dispatch = useDispatch();
+    useEffect(() => {
+        const {storageData ,decoded} =handleDecoded()
+            if(decoded?.id){
+                handleGetdetailsUser(decoded?.id, storageData)
+            }
+    },[])
 
-  
+    const handleDecoded =()=>{
+        let storageData =localStorage.getItem('access-token')
+        let decoded = {}
+        if(storageData && isJsonString(storageData)){
+            storageData = JSON.parse(storageData);
+                decoded = jwtDecode(storageData)
+        }
+        return {decoded, storageData}
+    }
 
-    // useEffect(()=>{
-    //     fetchApi()
-    // },[])
+    UserService.axiosJWT.interceptors.request.use(async (config) =>{
+        const {decoded} =handleDecoded()
+        const currentTime = new Date()
+        if(decoded?.exp < currentTime.getTime() / 1000){
+            const data = await UserService.refreshToken()
+            config.headers['token'] = `Bearer ${data?.access_token}`;
+        }
+        return config;
+    },
+    function (error) {
+        return Promise.reject(error);
+    })
 
-    // const fetchApi = async()=>{
-    //     const res = await axios.get(`${process.env.REACT_APP_API_URL}/product/get-all`)
-    //     return res.data
-    // }
+      const handleGetdetailsUser = async(id, token) => {
+        const res = await UserService.getDetailsUser(id, token)
+        dispatch(updateUser({...res?.data,access_token:token}))
+      }
 
-    //   const query = useQuery({queryKey:['todos'],queryFn:fetchApi})
-    // console.log('query',query)
     return (
         <div>
             <Router>
