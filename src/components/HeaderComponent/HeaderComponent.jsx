@@ -20,14 +20,14 @@ const HeaderComponent =() => {
         }
         const handleLogout = async () => {
             setLoading(true);
-            await UserService.logoutUSer();
+            await UserService.logoutUser();
             dispatch(resetUser());
             setLoading(false);
         }
         const content = (
             <div>
                 <WrapperContentPopup onClick={handleLogout}>Đăng xuất </WrapperContentPopup>
-                <WrapperContentPopup>Thông tin người dùng </WrapperContentPopup>
+                <WrapperContentPopup onClick={()=>navigate('/profile-user')}>Thông tin người dùng </WrapperContentPopup>
             </div>
         )
 
@@ -50,10 +50,10 @@ const HeaderComponent =() => {
                     <WrapperHeaderAccount>
                         <UserOutlined style={{fontSize:'30px'}}/>
     
-                            {user?.name ? (
+                            {user?.access_token ? (
                                <> 
                             <Popover content={content} trigger="click">
-                                <div style={{cursor:'pointer'}}>{user.name}</div>
+                                <div style={{cursor:'pointer'}}>{user?.name?.length ? user?.name: user?.email}</div>
                             </Popover>
                                </>
                             ):(
