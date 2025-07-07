@@ -1,5 +1,5 @@
 import {  Button, Col, Popover } from 'antd';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { WrapperHeader, WrapperHeaderAccount, WrapperHeaderCol, WrapperTextHeaderSmall } from './style';
 import { CaretDownOutlined, ShoppingCartOutlined, UserOutlined } from '@ant-design/icons';
 import ButtonInputSearch from '../ButtonInputSearch/ButtonInputSearch';
@@ -15,6 +15,7 @@ const HeaderComponent =() => {
         const navigate = useNavigate();
         const user = useSelector((state) => state.user);
         const [loading, setLoading] = useState(false);
+        const [username, setUsername] = useState('');
         const handleNavigateLogin = () => {
             navigate('/sign-in')
         }
@@ -24,6 +25,13 @@ const HeaderComponent =() => {
             dispatch(resetUser());
             setLoading(false);
         }
+
+        useEffect(() => {
+            setLoading(true);
+            setUsername(user?.name)
+            setLoading(false);
+        },[user.name])
+
         const content = (
             <div>
                 <WrapperContentPopup onClick={handleLogout}>Đăng xuất </WrapperContentPopup>
@@ -53,7 +61,7 @@ const HeaderComponent =() => {
                             {user?.access_token ? (
                                <> 
                             <Popover content={content} trigger="click">
-                                <div style={{cursor:'pointer'}}>{user?.name?.length ? user?.name: user?.email}</div>
+                                <div style={{cursor:'pointer'}}>{username.length ? username: user?.email}</div>
                             </Popover>
                                </>
                             ):(

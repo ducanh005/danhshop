@@ -8,6 +8,7 @@ import { useMutationHooks } from "../../hooks/userMutationHook";
 import { data } from "react-router-dom";
 import Loading from "../../components/LoadingComponent/Loading";
 import * as message from '../../components/Message/Message';
+import { updateUser } from "../../redux/slides/userSlide";
 const ProfilePage = () => {
   const user = useSelector((state) => state.user);
     const [email, setEmail] = useState('')
@@ -16,9 +17,13 @@ const ProfilePage = () => {
     const [address, setAddress] = useState('')
     const [avatar, setAvatar] = useState('')
     const mutation = useMutationHooks(
-      (id, data) => UserService.updateUser(id, data),
+      ( data) => {
+        console.log('Mutation đang gọi với data:', data);
+        const {id,access_token,...rests}= data
+        return  UserService.updateUser(id, rests,access_token)
+        }
     )
-    const dispatch = useDispatch((state) => state.dispatch);
+    const dispatch = useDispatch();
     const {data, isPending, isSuccess, isError} = mutation
 
     useEffect(() => {
@@ -30,6 +35,7 @@ const ProfilePage = () => {
     },[user])
 
     useEffect(() => {
+      console.log("isSuccess:", isSuccess, "isError:", isError)
        if(isSuccess){
         message.success()
         handleGetdetailsUser(user?.id, user?.access_token)
@@ -40,7 +46,7 @@ const ProfilePage = () => {
 
     const handleGetdetailsUser = async(id, token) => {
         const res = await UserService.getDetailsUser(id, token)
-        dispatch(UserService.updateUser({...res?.data,access_token:token}))
+        dispatch(updateUser({...res?.data,access_token: token}))
       }
 
     const handleOnchangeEmail = (value) => {
@@ -59,7 +65,8 @@ const ProfilePage = () => {
       setAvatar(value)
     }
     const handleUpdate = () => {
-      mutation.mutate(user?.id, {name,email,phone,address,avatar})
+       console.log('Updating with: ', { name, email, phone, address, avatar });
+      mutation.mutate({id: user?.id, name,email,phone,address,avatar, access_token: user?.access_token});
      
     }
     
