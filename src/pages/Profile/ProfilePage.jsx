@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import InputForm from "../../components/InputForm/InputForm";
-import { WrapperContentProfile, WrapperHeader, WrapperLabel,WrapperInput } from "./style";
+import { WrapperContentProfile, WrapperHeader, WrapperLabel,WrapperInput, WarapperUploadFile } from "./style";
 import ButtonComponent from "../../components/ButtonComponent/ButtonComponent";
 import { useDispatch, useSelector } from "react-redux";
 import * as UserService from '../../service/UserService';
@@ -9,6 +9,9 @@ import { data } from "react-router-dom";
 import Loading from "../../components/LoadingComponent/Loading";
 import * as message from '../../components/Message/Message';
 import { updateUser } from "../../redux/slides/userSlide";
+import { Button, Upload } from "antd";
+import { UploadOutlined } from '@ant-design/icons';
+import { getBase64 } from "../../utils";
 const ProfilePage = () => {
   const user = useSelector((state) => state.user);
     const [email, setEmail] = useState('')
@@ -35,7 +38,6 @@ const ProfilePage = () => {
     },[user])
 
     useEffect(() => {
-      console.log("isSuccess:", isSuccess, "isError:", isError)
        if(isSuccess){
         message.success()
         handleGetdetailsUser(user?.id, user?.access_token)
@@ -61,8 +63,12 @@ const ProfilePage = () => {
     const handleOnchangeAddress = (value) => {
       setAddress(value)
     }
-    const handleOnchangeAvatar = (value) => {
-      setAvatar(value)
+    const handleOnchangeAvatar = async({fileList}) => {
+      const file = fileList[0];
+      if(!file.url && !file.preview){
+        file.preview = await getBase64(file.originFileObj );
+      }
+      setAvatar(file.preview);
     }
     const handleUpdate = () => {
        console.log('Updating with: ', { name, email, phone, address, avatar });
@@ -138,7 +144,18 @@ const ProfilePage = () => {
                  </WrapperInput>
                  <WrapperInput>
                       <WrapperLabel htmlFor="avatar">Avatar</WrapperLabel>
-                      <InputForm style={{width:'300px'}} id="avatar" value={avatar} onChange={handleOnchangeAvatar} ></InputForm>
+                      <WarapperUploadFile onChange={handleOnchangeAvatar} maxCount={1}>
+                        <Button icon={<UploadOutlined/>}>Select File</Button>
+                      </WarapperUploadFile>
+                      {avatar && (
+                        <img src={avatar} style={{
+                          height:'60px',
+                          width:'60px',
+                          borderRadius:'50%',
+                          objectFit:'cover',
+                        }} alt="avatar"/>
+                      )}
+                      {/* <InputForm style={{width:'300px'}} id="avatar" value={avatar} onChange={handleOnchangeAvatar} ></InputForm> */}
                       <ButtonComponent 
                       onClick={handleUpdate}
                       size={40} 

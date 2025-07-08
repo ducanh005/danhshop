@@ -16,6 +16,7 @@ const HeaderComponent =() => {
         const user = useSelector((state) => state.user);
         const [loading, setLoading] = useState(false);
         const [username, setUsername] = useState('');
+        const [userAvatar, setUserAvatar] = useState('');
         const handleNavigateLogin = () => {
             navigate('/sign-in')
         }
@@ -29,8 +30,9 @@ const HeaderComponent =() => {
         useEffect(() => {
             setLoading(true);
             setUsername(user?.name)
+            setUserAvatar(user?.avatar);
             setLoading(false);
-        },[user.name])
+        },[user.name, user?.avatar])
 
         const content = (
             <div>
@@ -56,7 +58,17 @@ const HeaderComponent =() => {
             <Col span={6} style={{display:'flex', gap:'54px',alignItems:'center'}}>
               <Loading isPending={loading}>
                     <WrapperHeaderAccount>
-                        <UserOutlined style={{fontSize:'30px'}}/>
+                        {userAvatar?(
+                            <img src={userAvatar} alt='avatar' style={{
+                          height:'30px',
+                          width:'30px',
+                          borderRadius:'50%',
+                          objectFit:'cover',
+                        }} ></img>
+                        ): 
+                        (
+                            <UserOutlined style={{fontSize:'30px'}}/>
+                        )}
     
                             {user?.access_token ? (
                                <> 
