@@ -6,7 +6,9 @@ import official_logo from '../../assest/images/official_logo.png';
 import { Image } from "antd";
 import { WrapperImageStyle } from "./style";
 import {WrapperStyleTextSell} from "./style";
-const CardComponent = ({ }) => {
+const CardComponent = (props) => {
+  const { countInStock, description, image, name, price, rating, type, selled , discount} = props
+
   return (
   <WrapperCardStyle
     hoverable
@@ -18,18 +20,18 @@ const CardComponent = ({ }) => {
     <img alt="logo" src={official_logo} style={{width:'68px', height:'14px', position:'absolute',top:-1, left:-1,
       borderTopLeftRadius: '3px'
     }}></img>
-    <StyleNameProduct>Iphone</StyleNameProduct>
+    <StyleNameProduct>{name}</StyleNameProduct>
     <WrapperReportText>
        <span style={{marginRight: '4px'}}>
-            <span>4.96</span>
+            <span>{rating}</span>
             <StarFilled style={{fontSize:'12px', color:'yellow'}}/>
        </span>
-        <WrapperStyleTextSell>| Đã bán 1000+  </WrapperStyleTextSell>
+        <WrapperStyleTextSell>| Đã bán {selled || 1000}+  </WrapperStyleTextSell>
     </WrapperReportText>
         <WrapperPriceText>
-            <span style={{marginRight:'8px'}}>1.000.000Đ</span>
+            <span style={{marginRight:'8px'}}>{price}</span>
              <WrapperDiscountText>
-                -5%
+                {discount || 5}%
             </WrapperDiscountText>
         </WrapperPriceText>
   </WrapperCardStyle>
