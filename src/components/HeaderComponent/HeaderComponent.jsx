@@ -10,7 +10,7 @@ import { WrapperContentPopup } from './style';
 import * as UserService from '../../service/UserService';
 import { resetUser } from '../../redux/slides/userSlide';
 import Loading from '../LoadingComponent/Loading';
-const HeaderComponent =() => {
+const HeaderComponent =({isHiddenSearch = false ,isHiddenCart= false}) => {
         const dispatch = useDispatch();
         const navigate = useNavigate();
         const user = useSelector((state) => state.user);
@@ -36,25 +36,31 @@ const HeaderComponent =() => {
 
         const content = (
             <div>
-                <WrapperContentPopup onClick={handleLogout}>Đăng xuất </WrapperContentPopup>
                 <WrapperContentPopup onClick={()=>navigate('/profile-user')}>Thông tin người dùng </WrapperContentPopup>
+                {user?.isAdmin && (
+                    <WrapperContentPopup onClick={()=>navigate('/system/admin')}>Quản lí hệ thống  </WrapperContentPopup>
+                )}
+                <WrapperContentPopup onClick={handleLogout}>Đăng xuất </WrapperContentPopup>
             </div>
         )
 
 
     return ( <div style={{width:'100%', background:'rgb(26,148,255)',display:'flex', justifyContent:'center'}}>
-        <WrapperHeader >
+        <WrapperHeader style={{justifyContent: isHiddenSearch && isHiddenCart ? 'space-between' : 'unset'}}>
             <Col span={5}>
                 <WrapperHeaderCol>DANHSHOP</WrapperHeaderCol>
             </Col>
-            <Col span={13}> 
-                <ButtonInputSearch
-                size='large'
-                textButton="Tìm kiếm"
-                placeholder="Tìm kiếm sản phẩm"
-               
-              ></ButtonInputSearch>
-            </Col>
+            {!isHiddenSearch && (
+                <Col span={13}> 
+                    <ButtonInputSearch
+                    size='large'
+                    textButton="Tìm kiếm"
+                    placeholder="Tìm kiếm sản phẩm"
+                
+                ></ButtonInputSearch>
+                </Col>
+
+            )}
             <Col span={6} style={{display:'flex', gap:'54px',alignItems:'center'}}>
               <Loading isPending={loading}>
                     <WrapperHeaderAccount>
@@ -72,7 +78,7 @@ const HeaderComponent =() => {
     
                             {user?.access_token ? (
                                <> 
-                            <Popover content={content} trigger="click">
+                            <Popover content={content} trigger="click" >
                                 <div style={{cursor:'pointer'}}>{username.length ? username: user?.email}</div>
                             </Popover>
                                </>
@@ -88,12 +94,14 @@ const HeaderComponent =() => {
                         
                     </WrapperHeaderAccount>
               </Loading>
+              {!isHiddenCart && (
                 <div>
                     <Badge count={4} size="small">
                         <ShoppingCartOutlined style={{fontSize:'30px',color:'#fff'}}/>
                     </Badge>
                         <WrapperTextHeaderSmall>Giỏ hàng</WrapperTextHeaderSmall>
                 </div>
+              )}
                 </Col>
         </WrapperHeader>
     </div> );

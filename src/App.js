@@ -20,6 +20,7 @@ function App() {
             if(decoded?.id){
                 handleGetdetailsUser(decoded?.id, storageData)
             }
+        setIsLoading(false);
     },[])
 
     const handleDecoded =()=>{
@@ -48,7 +49,6 @@ function App() {
       const handleGetdetailsUser = async(id, token) => {
         const res = await UserService.getDetailsUser(id, token)
         dispatch(updateUser({...res?.data,access_token:token}))
-        setIsLoading(false);
       }
 
     return (
