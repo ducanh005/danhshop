@@ -21,7 +21,6 @@ const ProfilePage = () => {
     const [avatar, setAvatar] = useState('')
     const mutation = useMutationHooks(
       ( data) => {
-        console.log('Mutation đang gọi với data:', data);
         const {id,access_token,...rests}= data
         return  UserService.updateUser(id, rests,access_token)
         }
