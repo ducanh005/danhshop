@@ -1,6 +1,6 @@
 import { Button, Checkbox, Form, Input, Modal } from "antd";
 import { WrapperHeader } from "./style";
-import {  PlusOutlined } from '@ant-design/icons';
+import {  DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import TableComponent from "../TableComponent/TableComponent";
 import { useEffect, useState } from "react";
 import InputComponent from "../InputComponent/InputComponent";
@@ -11,6 +11,7 @@ import * as ProductService from '../../service/ProductService'
 import { useMutationHooks } from "../../hooks/userMutationHook";
 import Loading from "../LoadingComponent/Loading";
 import * as message from '../../components/Message/Message'
+import { useQuery } from "@tanstack/react-query";
 const AdminProduct = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [stateProduct, setStateProduct] = useState({
@@ -22,6 +23,8 @@ const AdminProduct = () => {
         rating: '',
         image:''
     })
+    const [form] = Form.useForm()
+
     const mutation = useMutationHooks(
           ( data) => {
             const {
@@ -37,6 +40,48 @@ const AdminProduct = () => {
             }
         )
     const {data, isPending, isSuccess, isError} = mutation
+    const getAllProducts = async()=>{
+        const res = await ProductService.getAllProduct()
+        return res
+    }
+    const {isPending: isLoadingProduct,data: products} = useQuery({queryKey:['products'],queryFn: getAllProducts})
+    const renderAction =()=>{
+        return (
+            <div>
+                <DeleteOutlined style={{color:'red', fontSize:'30px', cursor:'pointer'}}/>
+                <EditOutlined style={{color:'orange', fontSize:'30px',cursor:'pointer'}}/>
+            </div>
+        )
+    }
+    const columns = [
+        {
+            title: 'Name',
+            dataIndex: 'name',
+            render: text => <a>{text}</a>,
+        },
+        {
+            title: 'Price',
+            dataIndex: 'price',
+        },
+        {
+            title: 'Rating',
+            dataIndex: 'rating',
+        },
+        {
+            title: 'Type',
+            dataIndex: 'type',
+        },
+        {
+            title: 'Action',
+            dataIndex: 'action',
+            render:renderAction
+        },
+        ];
+    const dataTable =products?.data?.length && products?.data?.map((product)=>{
+        return {...product, key: product._id}
+    })
+    
+    
     useEffect(()=>{
         if(isSuccess && data?.status === 'OK'){
             message.success()
@@ -57,7 +102,7 @@ const AdminProduct = () => {
         rating: '',
         image:''
         })
-
+        form.resetFields()
     }
 
     const onFinish = () => {
@@ -88,23 +133,24 @@ const AdminProduct = () => {
                 <Button style={{height:'150px', width:'150px', borderRadius:'6px', borderStyle:'dashed'}} onClick={()=>setIsModalOpen(true)}><PlusOutlined style={{fontSize:'60px'}}/></Button>
             </div>
             <div style={{marginTop:'20px'}}> 
-                <TableComponent/>
+                <TableComponent columns={columns} isPending={isLoadingProduct} data={dataTable}/>
             </div>
              <Modal
                 title="Tạo sản phẩm"
                 closable={{ 'aria-label': 'Custom Close Button' }}
                 open={isModalOpen}
                 onCancel={handleCancel} 
-                okText=""
+                footer={null}
             >
                 <Loading isPending={isPending}>
                     <Form
                         name="basic"
-                        labelCol={{ span: 8 }}
-                        wrapperCol={{ span: 16 }}
-                        initialValues={{ remember: true }}
+                        labelCol={{ span: 6 }}
+                        wrapperCol={{ span: 18 }}
                         onFinish={onFinish}
                         autoComplete="off"
+                        form={form}
+
                     >
                         <Form.Item
                             label="Name"
@@ -167,7 +213,7 @@ const AdminProduct = () => {
                             </WarapperUploadFile>
                         </Form.Item>
                         
-                        <Form.Item label={null}>
+                        <Form.Item wrapperCol={{offset:20, span:16}} >
                             <Button type="primary" htmlType="submit">
                                 Submit
                             </Button>
