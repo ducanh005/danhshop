@@ -17,17 +17,20 @@ function App() {
     useEffect(() => {
         setIsLoading(true);
         const {storageData ,decoded} =handleDecoded()
-            if(decoded?.id){
-                handleGetdetailsUser(decoded?.id, storageData)
+        const fetchUser = async () => {
+            if (decoded?.id) {
+                await handleGetdetailsUser(decoded.id, storageData);
             }
         setIsLoading(false);
+    };
+
+        fetchUser();
     },[])
 
     const handleDecoded =()=>{
         let storageData =localStorage.getItem('access-token')
         let decoded = {}
-        if(storageData && isJsonString(storageData)){
-            storageData = JSON.parse(storageData);
+        if(storageData){
                 decoded = jwtDecode(storageData)
         }
         return {decoded, storageData}
@@ -38,7 +41,7 @@ function App() {
         const currentTime = new Date()
         if(decoded?.exp < currentTime.getTime() / 1000){
             const data = await UserService.refreshToken()
-            config.headers['token'] = `Bearer ${data?.access_token}`;
+            config.headers['Authorization'] = `Bearer ${data?.access_token}`;
         }
         return config;
     },

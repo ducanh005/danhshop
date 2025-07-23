@@ -15,6 +15,8 @@ import { useQuery } from "@tanstack/react-query";
 import DrawComponent from "../DrawerComponent/DrawerComponent";
 import {useSelector} from 'react-redux'
 const AdminProduct = () => {
+    const [fileList,setFileList] = useState([])
+    const [fileListUpdate, setFileListUpdate] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [rowSelected,setRowSelected] = useState('')
     const [isOpenDrawer, setIsOpenDrawer] = useState(false)
@@ -27,7 +29,7 @@ const AdminProduct = () => {
         price: '',
         description: '',
         rating: '',
-        image:''
+        image:'',
     })
     const [stateProductDetails, setStateProductDetail] = useState({
         name: '',
@@ -39,46 +41,37 @@ const AdminProduct = () => {
         image:''
     })
     const [form] = Form.useForm()
+    const [form1] = Form.useForm()
 
     const mutation = useMutationHooks(
           ( data) => {
             const {
+                image,
                 name,
                 type,
                 countInStock,
                 price,
+                rating,
                 description,
-                rating
             }= data
             
-            const res = ProductService.createProduct((
+            const res = ProductService.createProduct({
+                image,
                 name,
                 type,
                 countInStock,
                 price,
                 description,
                 rating
-            ))
+            })
             return res
             }
         )
 
-    const mutationUpdate = useMutationHooks(
-          ( data) => {
-            const {
-                id,
-                token,
-                ...rests
-            }= data
-            
-            const res = ProductService.updateProduct((
-                id,
-                token,
-                rests
-            ))
-            return res
-            }
-        )
+    const mutationUpdate = useMutationHooks((data) => {
+    const { id, ...rests } = data;
+    return ProductService.updateProduct(id, rests); // ✅ bỏ token
+});
 
 
 
@@ -98,9 +91,11 @@ const AdminProduct = () => {
         setIsPendingUpdate(false)
     }
 
-    useEffect(()=>{
-        form.setFieldsValue(stateProductDetails)
-    },[form,stateProductDetails])
+    useEffect(() => {
+        if (form1 && stateProductDetails?.name) {
+            form1.setFieldsValue(stateProductDetails)
+        }
+    }, [form1, stateProductDetails])
 
     useEffect(()=>{
         if(rowSelected){
@@ -116,7 +111,7 @@ const AdminProduct = () => {
         setIsOpenDrawer(true)
     }
     const {data, isPending, isSuccess, isError} = mutation
-    const {data:dataUpdated, isPending:isPendingUpdated, isSuccess:isSuccessUpdated, isError:isErrorUpdated} = mutation
+    const {data:dataUpdated, isPending:isPendingUpdated, isSuccess:isSuccessUpdated, isError:isErrorUpdated} = mutationUpdate
     const getAllProducts = async()=>{
         const res = await ProductService.getAllProduct()
         return res
@@ -179,7 +174,7 @@ const AdminProduct = () => {
         rating: '',
         image:''
         })
-        form.resetFields()
+        form1.resetFields()
     }
     useEffect(()=>{
         if(isSuccessUpdated && dataUpdated?.status === 'OK'){
@@ -213,7 +208,6 @@ const AdminProduct = () => {
             ...stateProduct,
             [e.target.name]: e.target.value
         })
-        console.log(e.target.name, e.target.value);
     }
 
     const handleOnchangeDetails = (e) => {
@@ -221,13 +215,13 @@ const AdminProduct = () => {
             ...stateProductDetails,
             [e.target.name]: e.target.value
         })
-        console.log(e.target.name, e.target.value);
     }
     const handleOnchangeAvatar = async({fileList}) => {
           const file = fileList[0];
           if(!file.url && !file.preview){
             file.preview = await getBase64(file.originFileObj );
           }
+          setFileList(fileList)
           setStateProduct({
             ...stateProduct,
             image: file.preview
@@ -238,15 +232,19 @@ const AdminProduct = () => {
           if(!file.url && !file.preview){
             file.preview = await getBase64(file.originFileObj );
           }
+          setFileListUpdate(fileList)
           setStateProductDetail({
             ...stateProductDetails,
             image: file.preview
           })
         }
 
-    const onUpdateProduct=()=>{
-        mutationUpdate.mutate({id:rowSelected,token: user?.access_token, stateProductDetails})
-    }
+    const onUpdateProduct = () => {
+    mutationUpdate.mutate({
+        id: rowSelected,
+        ...stateProductDetails
+    });
+};
 
     return (
         <div>
@@ -272,7 +270,7 @@ const AdminProduct = () => {
             >
                 <Loading isPending={isPending}>
                     <Form
-                        name="basic"
+                        name="create"
                         labelCol={{ span: 6 }}
                         wrapperCol={{ span: 18 }}
                         onFinish={onFinish}
@@ -320,14 +318,14 @@ const AdminProduct = () => {
                             name="rating"
                             rules={[{ required: true, message: 'Please input your Rating"!' }]}
                         >
-                              <InputComponent value={stateProduct.description} onChange={handleOnchange} name="rating" />
+                              <InputComponent value={stateProduct.rating} onChange={handleOnchange} name="rating" />
                         </Form.Item>
                         <Form.Item
                             label="Image"
                             name="image"
                             rules={[{ required: true, message: 'Please input your image!' }]}
                         >
-                            <WarapperUploadFile onChange={handleOnchangeAvatar} maxCount={1}>
+                            <WarapperUploadFile fileList={fileList} onChange={handleOnchangeAvatar} maxCount={1} beforeUpload={()=>false}>
                                 <Button >Select File</Button>
                                 {stateProduct?.image && (
                                     <img src={stateProduct?.image} style={{
@@ -357,7 +355,7 @@ const AdminProduct = () => {
                         wrapperCol={{ span: 22 }}
                         onFinish={onUpdateProduct}
                         autoComplete="off"
-                        form={form}
+                        form={form1}
 
                     >
                         <Form.Item
@@ -407,7 +405,7 @@ const AdminProduct = () => {
                             name="image"
                             rules={[{ required: true, message: 'Please input your image!' }]}
                         >
-                            <WarapperUploadFile onChange={handleOnchangeAvatarDetails} maxCount={1}>
+                            <WarapperUploadFile fileList={fileListUpdate} onChange={handleOnchangeAvatarDetails} maxCount={1} beforeUpload={()=>false}>
                                 <Button >Select File</Button>
                                 {stateProductDetails?.image && (
                                     <img src={stateProductDetails?.image} style={{

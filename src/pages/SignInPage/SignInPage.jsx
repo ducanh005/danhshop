@@ -31,18 +31,22 @@ const SignInPage = () => {
   const {data, isPending, isSuccess, isError} = mutation
 
   useEffect(() => {
-    if(isSuccess){
-      navigate('/')
-      localStorage.setItem('access-token', JSON.stringify(data?.access_token))
-      if(data?.access_token){
-        const decoded = jwtDecode(data?.access_token)
-        if(decoded?.id){
-          handleGetdetailsUser(decoded?.id, data?.access_token)
-        }
+    const token = localStorage.getItem('access-token');
+  const handlePostLogin = async () => {
+    if (isSuccess && data?.access_token) {
+      localStorage.setItem('access-token', data?.access_token);
+
+      const decoded = jwtDecode(data.access_token);
+      if (decoded?.id) {
+        await handleGetdetailsUser(decoded.id, data.access_token);
       }
+
+      navigate('/');
     }
-  },[isSuccess]
-  )
+  };
+
+  handlePostLogin();
+}, [isSuccess]);
 
   const handleGetdetailsUser = async(id, token) => {
     const res = await UserService.getDetailsUser(id, token)

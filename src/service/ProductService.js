@@ -8,8 +8,9 @@ export const getAllProduct = async () => {
 };
 
 export const createProduct = async (data) => {
+    console.log(data)
     const res = await axios.post(
-        `${process.env.REACT_APP_API_URL}/product/create`,data
+        `${process.env.REACT_APP_API_URL}/product/create`,data,
     );
     return res.data;
 };
@@ -20,11 +21,14 @@ export const getDetailsProduct = async (id) => {
     return res.data;
 };
 
-export const updateProduct = async (id, access_token,data) => {
+export const updateProduct = async (id, data) => {
+    const access_token = localStorage.getItem("access-token"); // ✅ Không cần truyền vào nữa
     const res = await axiosJWT.put(
-        `${process.env.REACT_APP_API_URL}/product/update/${id}`,data,{
-            headers:{
-                token:`Bearer ${access_token}`
+        `${process.env.REACT_APP_API_URL}/product/update/${id}`,
+        data,
+        {
+            headers: {
+                Authorization: `Bearer ${access_token}`
             }
         }
     );
