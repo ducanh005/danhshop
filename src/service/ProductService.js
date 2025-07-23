@@ -34,3 +34,17 @@ export const updateProduct = async (id, data) => {
     );
     return res.data;
 };
+
+export const deleteProduct = async (id) => {
+    const access_token = localStorage.getItem("access-token"); // ✅ Không cần truyền vào nữa
+    const res = await axiosJWT.delete(
+        `${process.env.REACT_APP_API_URL}/product/delete/${id}`,
+        
+        {
+            headers: {
+                Authorization: `Bearer ${access_token}`
+            }
+        }
+    );
+    return res.data;
+};
