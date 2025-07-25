@@ -1,8 +1,8 @@
-import { Button, Checkbox, Form, Input, Modal } from "antd";
+import { Button, Checkbox, Form, Input, Modal, Space } from "antd";
 import { WrapperHeader } from "./style";
-import {  DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
+import {  DeleteOutlined, EditOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import TableComponent from "../TableComponent/TableComponent";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import InputComponent from "../InputComponent/InputComponent";
 import { WarapperUploadFile } from "../../pages/Profile/style";
 import { getBase64 } from "../../utils";
@@ -23,6 +23,9 @@ const AdminProduct = () => {
     const [isOpenDrawer, setIsOpenDrawer] = useState(false)
     const [isPendingUpdate, setIsPendingUpdate] = useState(false)
     const [isModalOpenDelete,setIsModalOpenDelete] = useState(false)
+    const [searchText, setSearchText] = useState('');
+    const [searchedColumn, setSearchedColumn] = useState('');
+    const searchInput = useRef(null);
     const user = useSelector((state)=> state?.user)
     const [stateProduct, setStateProduct] = useState({
         name: '',
@@ -132,19 +135,125 @@ const AdminProduct = () => {
             </div>
         )
     }
+
+    const handleSearch = (selectedKeys, confirm, dataIndex) => {
+        confirm();
+        // setSearchText(selectedKeys[0]);
+        // setSearchedColumn(dataIndex);
+    };
+    const handleReset = clearFilters => {
+        clearFilters();
+        // setSearchText('');
+    };
+
+    const getColumnSearchProps = dataIndex => ({
+        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+        <div style={{ padding: 8 }} onKeyDown={e => e.stopPropagation()}>
+            <InputComponent
+            ref={searchInput}
+            placeholder={`Search ${dataIndex}`}
+            value={selectedKeys[0]}
+            onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+            onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+            style={{ marginBottom: 8, display: 'block' }}
+            />
+            <Space>
+            <Button
+                type="primary"
+                onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                icon={<SearchOutlined />}
+                size="small"
+                style={{ width: 90 }}
+            >
+                Search
+            </Button>
+            <Button
+                onClick={() => clearFilters && handleReset(clearFilters)}
+                size="small"
+                style={{ width: 90 }}
+            >
+                Reset
+            </Button>
+            </Space>
+        </div>
+        ),
+        filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1677ff' : undefined }} />,
+        onFilter: (value, record) =>
+        record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+        filterDropdownProps: {
+        onOpenChange(open) {
+            if (open) {
+            setTimeout(() => {
+                var _a;
+                return (_a = searchInput.current) === null || _a === void 0 ? void 0 : _a.select();
+            }, 100);
+            }
+        },
+        },
+        // render: text =>
+        // searchedColumn === dataIndex ? (
+        //     // <Highlighter
+        //     // highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
+        //     // searchWords={[searchText]}
+        //     // autoEscape
+        //     // textToHighlight={text ? text.toString() : ''}
+        //     // />
+        // ) : (
+        //     text
+        // ),
+    });
+
     const columns = [
         {
             title: 'Name',
             dataIndex: 'name',
-            render: text => <a>{text}</a>,
+            sorter:(a,b) => a.name.length - b.name.length,
+            ...getColumnSearchProps('name')
         },
         {
             title: 'Price',
             dataIndex: 'price',
+            sorter:(a,b) => a.price - b.price,
+            filters: [
+                {
+                    text: '>= 50',
+                    value: '>=',
+                },
+                {
+                    text: '<= 50',
+                    value: '<=',
+                },
+                
+                ],
+                onFilter: (value, record) =>{
+                    if(value === '>='){
+                        return record.price >= 50
+
+                    }return record.price <= 50
+                }
+
         },
         {
             title: 'Rating',
             dataIndex: 'rating',
+            sorter:(a,b) => a.rating - b.rating,
+            filters: [
+                {
+                    text: '>= 3',
+                    value: '>=',
+                },
+                {
+                    text: '<= 3',
+                    value: '<=',
+                },
+                
+                ],
+                onFilter: (value, record) =>{
+                    if(value === '>='){
+                        return Number(record.rating) >= 3
+
+                    }return Number(record.rating) <= 3
+                }
         },
         {
             title: 'Type',
