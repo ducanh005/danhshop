@@ -48,3 +48,16 @@ export const deleteProduct = async (id) => {
     );
     return res.data;
 };
+
+export const deleteManyProduct = async (ids) => {
+    const access_token = localStorage.getItem("access-token"); // ✅ Không cần truyền vào nữa
+    const res = await axiosJWT.post(
+        `${process.env.REACT_APP_API_URL}/product/delete-many`,ids,
+        {
+            headers: {
+                Authorization: `Bearer ${access_token}`
+            }
+        }
+    );
+    return res.data;
+};

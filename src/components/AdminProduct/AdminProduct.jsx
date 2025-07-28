@@ -84,6 +84,12 @@ const AdminProduct = () => {
         return ProductService.deleteProduct(id); 
     });
 
+    const mutationDeletedMany = useMutationHooks((data) => {
+        const { ...ids } = data;
+        return ProductService.deleteManyProduct(ids); 
+    });
+
+    console.log(mutationDeletedMany)
 
 
     const fetchGetDetailsProduct = async(rowSelected)=>{
@@ -109,18 +115,31 @@ const AdminProduct = () => {
     }, [form1, stateProductDetails])
 
     useEffect(()=>{
-        if(rowSelected){
+        if(rowSelected && isOpenDrawer){
+            setIsPendingUpdate(true)
             fetchGetDetailsProduct(rowSelected)
         }
-    },[rowSelected])
+    },[rowSelected,isOpenDrawer])
 
     const handleDetailsProduct=()=>{
      
         setIsOpenDrawer(true)
     }
+
+    const handleDeleteManyProducts =(ids)=>{
+        mutationDeletedMany.mutate(
+            { ids: ids, token: user?.access_token },
+            {
+            onSettled: () => {
+                queryProduct.refetch(); // ✅ Gọi lại danh sách sau khi xoá
+            },
+            }
+        );
+    }
     const {data, isPending, isSuccess, isError} = mutation
     const {data:dataUpdated, isPending:isPendingUpdated, isSuccess:isSuccessUpdated, isError:isErrorUpdated} = mutationUpdate
     const {data:dataDeleted, isPending:isPendingDeleted, isSuccess:isSuccessDeleted, isError:isErrorDeleted} = mutationDeleted
+    const {data:dataDeletedMany, isPending:isPendingDeletedMany, isSuccess:isSuccessDeletedMany, isError:isErrorDeletedMany} = mutationDeletedMany
     const getAllProducts = async()=>{
         const res = await ProductService.getAllProduct()
         return res
@@ -280,6 +299,15 @@ const AdminProduct = () => {
     },[isSuccess])
 
     useEffect(()=>{
+        if(isSuccessDeletedMany && dataDeletedMany?.status === 'OK'){
+            message.success()
+            handleCancelDelete()
+        }else if(isErrorDeletedMany){
+            message.error()
+        }
+    },[isSuccessDeletedMany])
+
+    useEffect(()=>{
         if(isSuccessDeleted && dataDeleted?.status === 'OK'){
             message.success()
             handleCancelDelete()
@@ -400,7 +428,7 @@ const AdminProduct = () => {
                 <Button style={{height:'150px', width:'150px', borderRadius:'6px', borderStyle:'dashed'}} onClick={()=>setIsModalOpen(true)}><PlusOutlined style={{fontSize:'60px'}}/></Button>
             </div>
             <div style={{marginTop:'20px'}}> 
-                <TableComponent columns={columns} isPending={isLoadingProduct} data={dataTable} onRow={(record, rowIndex)=>{
+                <TableComponent handleDeleteMany={handleDeleteManyProducts} columns={columns} isPending={isLoadingProduct} data={dataTable} onRow={(record, rowIndex)=>{
                     return {
                         onClick: event=>{
                             setRowSelected(record._id)
@@ -409,6 +437,7 @@ const AdminProduct = () => {
                 }}/>
             </div>
              <ModalComponent
+                forceRender
                 title="Tạo sản phẩm"
                 closable={{ 'aria-label': 'Custom Close Button' }}
                 open={isModalOpen}
@@ -576,6 +605,7 @@ const AdminProduct = () => {
             </DrawComponent>
 
              <ModalComponent
+                forceRender
                 title="Xóa sản phẩm"
                 closable={{ 'aria-label': 'Custom Close Button' }}
                 open={isModalOpenDelete}

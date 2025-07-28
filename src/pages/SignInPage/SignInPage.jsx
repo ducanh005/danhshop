@@ -31,11 +31,12 @@ const SignInPage = () => {
   const {data, isPending, isSuccess, isError} = mutation
 
   useEffect(() => {
+    
     const token = localStorage.getItem('access-token');
   const handlePostLogin = async () => {
     if (isSuccess && data?.access_token) {
       localStorage.setItem('access-token', data?.access_token);
-
+      console.log(data?.access_token)
       const decoded = jwtDecode(data.access_token);
       if (decoded?.id) {
         await handleGetdetailsUser(decoded.id, data.access_token);
