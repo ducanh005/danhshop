@@ -1,11 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit'
-import counterReducer from './slides/counterSlide'
 import userReducer from './slides/userSlide'
-import {createStore, applyMiddleware} from 'redux'
-import thunk from 'redux-thunk'
+import productReducer from './slides/productSlide'
 export const store = configureStore({
   reducer: {
-    counter: counterReducer,
+    product: productReducer,
     user:userReducer
   },
 })

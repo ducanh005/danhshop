@@ -8,7 +8,8 @@ const ButtonInputSearch =(props) => {
          size={size} 
          placeholder={placeholder} 
          bordered={bordered} 
-         style={{backgroundColor:backgroundColorInput}}  />
+         style={{backgroundColor:backgroundColorInput}}
+         {...props}  />
         <ButtonComponent
          size={size} 
          icon={<SearchOutlined color={colorButton} style={{color:'#fff'}    }/>} 
