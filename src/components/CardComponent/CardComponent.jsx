@@ -6,9 +6,13 @@ import official_logo from '../../assest/images/official_logo.png';
 import { Image } from "antd";
 import { WrapperImageStyle } from "./style";
 import {WrapperStyleTextSell} from "./style";
+import { useNavigate } from "react-router-dom";
 const CardComponent = (props) => {
-  const { countInStock, description, image, name, price, rating, type, selled , discount} = props
-
+  const { countInStock, description, image, name, price, rating, type, selled , discount, id} = props
+  const navigate = useNavigate();
+  const handleDetailsProduct = (id) => {
+    navigate(`/product-details/${id}`);
+  }
   return (
   <WrapperCardStyle
     hoverable
@@ -16,6 +20,7 @@ const CardComponent = (props) => {
     style={{ width: 200 }}
     bodyStyle={{ padding: '10px' }}
     cover={<img alt="example" src={image} />}
+    onClick={()=>handleDetailsProduct(id)}
   >
     <img alt="logo" src={official_logo} style={{width:'68px', height:'14px', position:'absolute',top:-1, left:-1,
       borderTopLeftRadius: '3px'
