@@ -68,3 +68,13 @@ export const deleteManyProduct = async (ids) => {
     );
     return res.data;
 };
+
+
+export const getAllTypeProduct = async (ids) => {
+    const access_token = localStorage.getItem("access-token"); // ✅ Không cần truyền vào nữa
+    const res = await axios.get(
+        `${process.env.REACT_APP_API_URL}/product/get-all-type`,ids,
+        
+    );
+    return res.data;
+};
