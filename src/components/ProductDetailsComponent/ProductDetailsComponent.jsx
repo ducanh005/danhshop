@@ -9,10 +9,15 @@ import * as ProductService from '../../service/ProductService';
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Loading from "../LoadingComponent/Loading";
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import { useLocation, useNavigate } from "react-router-dom";
+import { addOrderProduct } from "../../redux/slides/orderSlides";
 const ProductDetailsComponent = ({idProduct}) => {
   const [numProduct, setNumProduct] = useState(1);
   const user = useSelector((state) => state.user);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const dispatch = useDispatch();
   const onChange = (value) => {
     setNumProduct(Number(value));
   }
@@ -38,6 +43,33 @@ const ProductDetailsComponent = ({idProduct}) => {
       setNumProduct(numProduct +1);
     } else if(type === 'decrease'){
       setNumProduct(numProduct - 1);
+    }
+  }
+  const handleAddOrderProduct = ()=>{
+    if(!user.id){
+      navigate('/sign-in',{state:location?.pathname});
+    }else{
+      // {
+      //   name:{type:String, required:true},
+      //   amount:{type:Number, required:true},
+      //   image:{type:String, required:true},
+      //   price:{type:Number,required:true},
+      //   product:{
+      //       type:mongoose.Schema.Types.ObjectId,
+      //       ref:'Product',
+      //       required:true,
+      //   }
+      // },
+      dispatch(addOrderProduct({
+        orderItems:{
+          name:productDetails?.name,
+          amount:numProduct,
+          image:productDetails?.image,
+          price:productDetails?.price,
+          product:productDetails?._id
+        }
+      }))
+      navigate('/order');
     }
   }
   return (
@@ -96,7 +128,9 @@ const ProductDetailsComponent = ({idProduct}) => {
               <ButtonComponent 
                 size={40} 
                 styleButton={{background:'rgb(255,57,69)',height:'48px',width:'220px',border:'none',borderRadius:'4px'}} 
-                textButton={'Chọn mua '} styleTextButton={{color:'#fff',fontSize:'15px',fontWeight:'700'}}></ButtonComponent>
+                textButton={'Chọn mua '} styleTextButton={{color:'#fff',fontSize:'15px',fontWeight:'700'}}
+                onClick={handleAddOrderProduct}
+                ></ButtonComponent>
                 <ButtonComponent 
                 size={40} 
                 styleButton={{background:'#fff',height:'48px',width:'220px',border:'none',borderRadius:'4px',border:'1px solid rgb(13,92,182)'}} 
